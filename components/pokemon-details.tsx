@@ -19,7 +19,7 @@ export function PokemonDetails({ pokemon }: PokemonDetailsProps) {
       <div className="grid gap-6 md:grid-cols-2">
         <Card className="overflow-hidden">
           <div className="flex items-center justify-center bg-muted/30 p-6">
-            <img src={pokemon.image || "/placeholder.svg"} alt={pokemon.name} className="h-64 w-64 object-contain" />
+            <img src={pokemon.sprites.other.dream_world.front_default || "/placeholder.svg"} alt={pokemon.name} className="h-64 w-64 object-contain" />
           </div>
         </Card>
 
@@ -29,9 +29,9 @@ export function PokemonDetails({ pokemon }: PokemonDetailsProps) {
               <CardTitle>Type</CardTitle>
             </CardHeader>
             <CardContent className="flex gap-2">
-              {pokemon.types.map((type) => (
-                <Badge key={type} className="capitalize">
-                  {type}
+              {pokemon.types.map((type, index) => (
+                <Badge key={index} className="capitalize">
+                  {type.type.name}
                 </Badge>
               ))}
             </CardContent>
@@ -45,9 +45,9 @@ export function PokemonDetails({ pokemon }: PokemonDetailsProps) {
             <CardContent>
               <ul className="space-y-2">
                 {pokemon.abilities.map((ability, index) => (
-                  <li key={index} className="flex items-center gap-2">
+                  < li key={index} className="flex items-center gap-2" >
                     <div className="h-2 w-2 rounded-full bg-primary"></div>
-                    <span className="capitalize">{ability}</span>
+                    <span className="capitalize">{ability.ability.name}</span>
                   </li>
                 ))}
               </ul>
@@ -60,27 +60,17 @@ export function PokemonDetails({ pokemon }: PokemonDetailsProps) {
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <p className="text-sm text-muted-foreground">HP</p>
-                  <p className="font-medium">{pokemon.stats.hp}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Attack</p>
-                  <p className="font-medium">{pokemon.stats.attack}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Defense</p>
-                  <p className="font-medium">{pokemon.stats.defense}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Speed</p>
-                  <p className="font-medium">{pokemon.stats.speed}</p>
-                </div>
+                {pokemon.stats.map((stat, index) => (
+                  <div key={index} className="text-center">
+                    <p className="text-sm text-muted-foreground capitalize">{stat.stat.name}</p>
+                    <p className="font-medium">{stat.base_stat}</p>
+                  </div>
+                ))}
               </div>
             </CardContent>
           </Card>
         </div>
       </div>
-    </div>
+    </div >
   )
 }

@@ -12,16 +12,15 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar"
 import { Search } from "lucide-react"
+import Link from "next/link"
 import { Input } from "@/components/ui/input"
 import { useState } from "react"
 
 interface PokemonSidebarProps {
   pokemonList: Pokemon[]
-  onSelectPokemon: (pokemon: Pokemon) => void
-  selectedPokemon: Pokemon
 }
 
-export function PokemonSidebar({ pokemonList, onSelectPokemon, selectedPokemon }: PokemonSidebarProps) {
+export function PokemonSidebar({ pokemonList }: PokemonSidebarProps) {
   const [searchQuery, setSearchQuery] = useState("")
 
   const filteredPokemon = pokemonList.filter((pokemon) =>
@@ -49,13 +48,15 @@ export function PokemonSidebar({ pokemonList, onSelectPokemon, selectedPokemon }
         <SidebarMenu>
           {filteredPokemon.map((pokemon) => (
             <SidebarMenuItem key={pokemon.id}>
-              <SidebarMenuButton isActive={selectedPokemon.id === pokemon.id} onClick={() => onSelectPokemon(pokemon)}>
-                <div className="flex items-center gap-2">
-                  <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/10">
-                    <span className="text-xs font-medium text-primary">{pokemon.id}</span>
+              <SidebarMenuButton>
+                <Link href={`/pokemon/${pokemon.name.toLowerCase()}`}>
+                  <div className="flex items-center gap-2">
+                    <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/10">
+                      <span className="text-xs font-medium text-primary">{pokemon.id}</span>
+                    </div>
+                    <span>{pokemon.name}</span>
                   </div>
-                  <span>{pokemon.name}</span>
-                </div>
+                </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
           ))}
