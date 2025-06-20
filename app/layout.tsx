@@ -21,7 +21,7 @@ export default function RootLayout({
           <PokemonSidebar
             pokemonList={pokemonData}
           />
-          <main>
+          <main className='w-full'>
             {children}
           </main>
         </SidebarProvider>
