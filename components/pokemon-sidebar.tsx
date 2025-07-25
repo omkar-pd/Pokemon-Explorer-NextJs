@@ -16,7 +16,7 @@ import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import InfiniteScroll from "react-infinite-scroll-component"
 import { useState, useEffect } from "react"
-import { getAllPokemon } from "@/lib/pokemon"
+import { getAllPokemon } from "@/lib/pokemon-utils"
 
 const typeColors: Record<string, string> = {
   normal: "bg-gray-400",

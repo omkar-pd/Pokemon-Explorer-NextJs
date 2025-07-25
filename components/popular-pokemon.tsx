@@ -4,6 +4,7 @@ import Link from "next/link"
 import { useState, useEffect } from "react"
 import { Badge } from "@/components/ui/badge"
 import { Zap, Shield, Sword } from "lucide-react"
+import { fetchPopularPokemon } from "@/lib/pokemon-utils"
 
 interface PokemonStat {
   base_stat: number;
@@ -62,25 +63,19 @@ export function PopularPokemon() {
   const [popularPokemon, setPopularPokemon] = useState<Pokemon[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Popular Pokemon IDs to fetch
-  const popularIds = [25, 6, 9, 3, 448, 445]; // Pikachu, Charizard, Blastoise, Venusaur, Lucario, Garchomp
-
   useEffect(() => {
-    const fetchPopularPokemon = async () => {
+    const loadPopularPokemon = async () => {
       try {
-        const promises = popularIds.map(id => 
-          fetch(`https://pokeapi.co/api/v2/pokemon/${id}`).then(res => res.json())
-        );
-        const pokemonData = await Promise.all(promises);
+        const pokemonData = await fetchPopularPokemon();
         setPopularPokemon(pokemonData);
       } catch (error) {
-        console.error("Error fetching popular Pokemon:", error);
+        console.error("Error loading popular Pokemon:", error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchPopularPokemon();
+    loadPopularPokemon();
   }, []);
 
   if (loading) {

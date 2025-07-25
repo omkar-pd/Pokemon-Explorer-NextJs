@@ -1,23 +1,16 @@
 import { PokemonDetails } from "@/components/pokemon-details";
+import { fetchPokemon } from "@/lib/pokemon-utils";
 
 export default async function Page({
     params,
 }: {
     params: Promise<{ slug: string }>
 }) {
-    // await new Promise((resolve) => setTimeout(resolve, 3000));
     const { slug } = await params
-
-    try {
-        const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${slug}`);
-        const data = await response.json();
-        return (
-            <>
-                <PokemonDetails pokemon={data} />
-            </>
-        );
-    } catch (error) {
-        console.error("Error fetching data:", error);
-        return <div>Error loading Pokemon data</div>;
-    }
+    const data = await fetchPokemon(slug);
+    return (
+        <>
+            <PokemonDetails pokemon={data} />
+        </>
+    );
 }
