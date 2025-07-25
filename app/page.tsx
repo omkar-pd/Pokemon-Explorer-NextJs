@@ -1,10 +1,13 @@
 "use client"
+
+import { HeroBanner } from "@/components/hero-banner"
+import { PopularPokemon } from "@/components/popular-pokemon"
+
 export default function Page() {
-
   return (
-    <div className="flex items-center justify-center h-screen">
-      <h1 className="text-2xl">Select a Pokemon from the sidebar</h1>
-    </div>
-
+    <>
+      <HeroBanner />
+      <PopularPokemon />
+    </>
   )
 }

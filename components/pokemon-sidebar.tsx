@@ -80,7 +80,7 @@ export function PokemonSidebar() {
             <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
               <Zap className="w-4 h-4" />
             </div>
-            <h2 className="text-lg font-bold">Pokédex</h2>
+            <Link href='/'><h2 className="text-lg font-bold">Pokédex</h2></Link>
           </div>
           <SidebarTrigger className="text-white hover:bg-white/20" />
         </div>
