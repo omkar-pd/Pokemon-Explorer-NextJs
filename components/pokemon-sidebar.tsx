@@ -16,7 +16,7 @@ import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import InfiniteScroll from "react-infinite-scroll-component"
 import { useState, useEffect } from "react"
-import { getAllPokemon } from "@/lib/pokemon-utils"
+import { usePokemonList } from "@/hooks/use-pokemon-list"
 
 const typeColors: Record<string, string> = {
   normal: "bg-gray-400",
@@ -42,22 +42,17 @@ const typeColors: Record<string, string> = {
 export function PokemonSidebar() {
   const [searchQuery, setSearchQuery] = useState("")
   const [pokemonList, setPokemonList] = useState([])
-  const [allPokemon, setAllPokemon] = useState([])
   const [page, setPage] = useState(1)
   const itemsPerPage = 50
 
-  useEffect(() => {
-    const fetchPokemon = async () => {
-      const data = await getAllPokemon()
-      setAllPokemon(data)
-      setPokemonList(data.slice(0, itemsPerPage))
-    }
-    fetchPokemon()
-  }, [])
+  // Use shared Pokemon list
+  const { pokemon: allPokemon, loading: pokemonLoading } = usePokemonList()
 
   useEffect(() => {
     if (searchQuery) {
-      const filtered = allPokemon.filter((pokemon) => pokemon.name.toLowerCase().includes(searchQuery.toLowerCase()))
+      const filtered = allPokemon.filter((pokemon) =>
+        pokemon.name.toLowerCase().includes(searchQuery.toLowerCase())
+      )
       setPokemonList(filtered)
     } else {
       setPokemonList(allPokemon.slice(0, page * itemsPerPage))
@@ -70,6 +65,31 @@ export function PokemonSidebar() {
       setPokemonList((prev) => [...prev, ...nextItems])
       setPage((prev) => prev + 1)
     }
+  }
+
+  if (pokemonLoading) {
+    return (
+      <Sidebar className="border-r-2 border-border/50">
+        <SidebarHeader className="bg-gradient-to-r from-red-500 to-blue-500 text-white p-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
+                <Zap className="w-4 h-4" />
+              </div>
+              <Link href='/'><h2 className="text-lg font-bold">Pokédex</h2></Link>
+            </div>
+            <SidebarTrigger className="text-white hover:bg-white/20" />
+          </div>
+        </SidebarHeader>
+        <SidebarContent className="flex items-center justify-center">
+          <div className="flex items-center gap-2 text-muted-foreground">
+            <Loader2 className="h-6 w-6 animate-spin" />
+            <span>Loading Pokémon...</span>
+          </div>
+        </SidebarContent>
+        <SidebarRail />
+      </Sidebar>
+    )
   }
 
   return (
