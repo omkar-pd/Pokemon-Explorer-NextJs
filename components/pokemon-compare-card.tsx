@@ -163,15 +163,6 @@ export function PokemonCompareCard({ pokemon, side }: PokemonCompareCardProps) {
           )
         })}
       </div>
-
-      {/* View Details Button */}
-      <div className="mt-6">
-        <Link href={`/pokemon/${pokemon.name}`}>
-          <Button className="w-full bg-white/80 text-gray-800 hover:bg-white">
-            View Full Details
-          </Button>
-        </Link>
-      </div>
     </div>
   )
 }
