@@ -1,230 +1,11 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
+import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { Search, Loader2, Zap, ArrowRight } from "lucide-react"
-import { Input } from "@/components/ui/input"
+import { Zap, ArrowRight, Search } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { SidebarInset, SidebarTrigger } from "@/components/ui/sidebar"
-import { usePokemonList } from "@/hooks/use-pokemon-list"
-
-interface CustomPokemonSelectorProps {
-  placeholder: string
-  value: string
-  onChange: (value: string) => void
-  sideColor: string
-  label: string
-}
-
-function CustomPokemonSelector({ placeholder, value, onChange, sideColor, label }: CustomPokemonSelectorProps) {
-  const [searchValue, setSearchValue] = useState("")
-  const [suggestions, setSuggestions] = useState<any[]>([])
-  const [showSuggestions, setShowSuggestions] = useState(false)
-  const [selectedIndex, setSelectedIndex] = useState(-1)
-  const [isTyping, setIsTyping] = useState(false)
-  const inputRef = useRef<HTMLInputElement>(null)
-  const suggestionsRef = useRef<HTMLDivElement>(null)
-
-  const { pokemon: allPokemon, loading: pokemonLoading } = usePokemonList()
-
-  useEffect(() => {
-    setSearchValue(value)
-  }, [value])
-
-  useEffect(() => {
-    if (!pokemonLoading && allPokemon.length > 0) {
-      if (searchValue.trim()) {
-        const filtered = allPokemon
-          .filter(pokemon =>
-            pokemon.name.toLowerCase().includes(searchValue.toLowerCase())
-          )
-          .slice(0, 8)
-        setSuggestions(filtered)
-        if (isTyping) {
-          setShowSuggestions(filtered.length > 0)
-        }
-      } else {
-        setSuggestions(allPokemon.slice(0, 8))
-        if (isTyping) {
-          setShowSuggestions(true)
-        }
-      }
-      setSelectedIndex(-1)
-    }
-  }, [searchValue, allPokemon, pokemonLoading, isTyping])
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value
-    setSearchValue(newValue)
-    setIsTyping(true)
-    setShowSuggestions(true)
-  }
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (!showSuggestions || suggestions.length === 0) {
-      if (e.key === 'Enter') {
-        e.preventDefault()
-        handleDirectSubmit()
-      }
-      return
-    }
-
-    switch (e.key) {
-      case 'ArrowDown':
-        e.preventDefault()
-        setSelectedIndex(prev =>
-          prev < suggestions.length - 1 ? prev + 1 : 0
-        )
-        break
-      case 'ArrowUp':
-        e.preventDefault()
-        setSelectedIndex(prev => prev > 0 ? prev - 1 : suggestions.length - 1)
-        break
-      case 'Enter':
-        e.preventDefault()
-        if (selectedIndex >= 0 && selectedIndex < suggestions.length) {
-          selectPokemon(suggestions[selectedIndex])
-        } else {
-          handleDirectSubmit()
-        }
-        break
-      case 'Escape':
-        e.preventDefault()
-        closeSuggestions()
-        inputRef.current?.blur()
-        break
-    }
-  }
-
-  const handleDirectSubmit = () => {
-    if (searchValue.trim()) {
-      onChange(searchValue.trim())
-      setIsTyping(false)
-      closeSuggestions()
-    }
-  }
-
-  const selectPokemon = (pokemon: any) => {
-    onChange(pokemon.name)
-    setSearchValue(pokemon.name)
-    setIsTyping(false)
-    closeSuggestions()
-  }
-
-  const closeSuggestions = () => {
-    setShowSuggestions(false)
-    setSelectedIndex(-1)
-  }
-
-  const handleInputFocus = () => {
-    if (!pokemonLoading && allPokemon.length > 0) {
-      setIsTyping(true)
-      if (searchValue.trim()) {
-        const filtered = allPokemon
-          .filter(pokemon =>
-            pokemon.name.toLowerCase().includes(searchValue.toLowerCase())
-          )
-          .slice(0, 8)
-        setSuggestions(filtered)
-        setShowSuggestions(filtered.length > 0)
-      } else {
-        setSuggestions(allPokemon.slice(0, 8))
-        setShowSuggestions(true)
-      }
-    }
-  }
-
-  const handleInputBlur = (e: React.FocusEvent) => {
-    if (suggestionsRef.current?.contains(e.relatedTarget as Node)) {
-      return
-    }
-
-    setTimeout(() => {
-      setIsTyping(false)
-      closeSuggestions()
-    }, 150)
-  }
-
-  const handleSuggestionClick = (pokemon: any) => {
-    selectPokemon(pokemon)
-  }
-
-  return (
-    <div className="relative group">
-      <div className={`absolute -inset-1 bg-gradient-to-r ${sideColor === 'blue' ? 'from-blue-600 to-purple-600' : 'from-red-600 to-pink-600'} rounded-xl blur opacity-20 group-hover:opacity-40 transition duration-300`}></div>
-      <div className="relative bg-white rounded-lg border-2 border-gray-100 focus-within:border-gray-300 transition-all duration-200 shadow-sm hover:shadow-md">
-        <div className={`absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 rounded-full bg-gradient-to-r ${sideColor === 'blue' ? 'from-blue-500 to-purple-500' : 'from-red-500 to-pink-500'} flex items-center justify-center z-10`}>
-          <Search className="h-3 w-3 text-white" />
-        </div>
-        <Input
-          ref={inputRef}
-          placeholder={pokemonLoading ? "Loading Pokémon..." : placeholder}
-          className="pl-12 pr-10 h-12 text-base border-0 focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent"
-          value={searchValue}
-          onChange={handleInputChange}
-          onKeyDown={handleKeyDown}
-          onFocus={handleInputFocus}
-          onBlur={handleInputBlur}
-          disabled={pokemonLoading}
-          autoComplete="off"
-        />
-
-        {pokemonLoading && (
-          <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-            <Loader2 className="h-5 w-5 animate-spin text-gray-400" />
-          </div>
-        )}
-
-        {/* Suggestions Dropdown */}
-        {showSuggestions && suggestions.length > 0 && !pokemonLoading && (
-          <div
-            ref={suggestionsRef}
-            className="absolute top-full left-0 right-0 z-50 mt-2 bg-white border border-gray-200 rounded-xl shadow-xl max-h-64 overflow-y-auto backdrop-blur-sm"
-          >
-            {suggestions.map((pokemon, index) => (
-              <div
-                key={pokemon.name}
-                className={`px-4 py-3 cursor-pointer transition-all duration-150 flex items-center gap-3 ${index === selectedIndex
-                  ? `bg-gradient-to-r ${sideColor === 'blue' ? 'from-blue-50 to-purple-50 border-l-4 border-blue-500' : 'from-red-50 to-pink-50 border-l-4 border-red-500'}`
-                  : 'hover:bg-gray-50'
-                  } ${index === 0 ? 'rounded-t-xl' : ''} ${index === suggestions.length - 1 ? 'rounded-b-xl' : ''}`}
-                onClick={() => handleSuggestionClick(pokemon)}
-                onMouseEnter={() => setSelectedIndex(index)}
-                onMouseDown={(e) => e.preventDefault()} // Prevent blur when clicking
-              >
-                <div className={`w-2 h-2 rounded-full bg-gradient-to-r ${sideColor === 'blue' ? 'from-blue-400 to-purple-400' : 'from-red-400 to-pink-400'} shadow-sm`}></div>
-                <span className="capitalize font-medium text-gray-800 flex-1">
-                  {pokemon.name}
-                </span>
-                <div className="w-4 h-4 text-gray-400">
-                  <svg viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
-                  </svg>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-        {showSuggestions && suggestions.length === 0 && searchValue.trim() && !pokemonLoading && (
-          <div className="absolute top-full left-0 right-0 z-50 mt-2 bg-white border border-gray-200 rounded-xl shadow-lg">
-            <div className="px-4 py-3 text-sm text-gray-500 text-center">
-              No Pokémon found matching "{searchValue}"
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Selected Pokemon Indicator */}
-      {value && !isTyping && (
-        <div className={`mt-2 flex items-center gap-2 text-sm font-medium ${sideColor === 'blue' ? 'text-blue-700' : 'text-red-700'}`}>
-          <div className={`w-2 h-2 rounded-full bg-gradient-to-r ${sideColor === 'blue' ? 'from-blue-500 to-purple-500' : 'from-red-500 to-pink-500'}`}></div>
-          <span className="capitalize">{value}</span>
-          <span className="text-green-500">✓</span>
-        </div>
-      )}
-    </div>
-  )
-}
+import { PokemonSelector } from "@/components/pokemon-selector"
 
 export default function ComparePage() {
   const [leftPokemon, setLeftPokemon] = useState("")
@@ -291,12 +72,11 @@ export default function ComparePage() {
                       <p className="text-sm text-blue-600/80">Choose your first Pokémon</p>
                     </div>
                   </div>
-                  <CustomPokemonSelector
-                    placeholder="e.g., Pikachu, Charizard..."
+                  <PokemonSelector
+                    side="left"
                     value={leftPokemon}
                     onChange={setLeftPokemon}
-                    sideColor="blue"
-                    label="First Fighter"
+                    placeholder="e.g., Pikachu, Charizard..."
                   />
                 </div>
 
@@ -311,12 +91,11 @@ export default function ComparePage() {
                       <p className="text-sm text-red-600/80">Choose your second Pokémon</p>
                     </div>
                   </div>
-                  <CustomPokemonSelector
-                    placeholder="e.g., Blastoise, Venusaur..."
+                  <PokemonSelector
+                    side="right"
                     value={rightPokemon}
                     onChange={setRightPokemon}
-                    sideColor="red"
-                    label="Second Fighter"
+                    placeholder="e.g., Blastoise, Venusaur..."
                   />
                 </div>
               </div>

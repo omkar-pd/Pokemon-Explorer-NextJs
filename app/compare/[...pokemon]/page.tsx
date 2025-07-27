@@ -2,23 +2,23 @@ import { fetchPokemon } from "@/lib/pokemon-utils"
 import Link from "next/link"
 import { ArrowLeft } from "lucide-react"
 import { PokemonCompareCard } from "@/components/pokemon-compare-card"
-import { PokemonSelector } from "@/components/pokemon-selector"
 import { PokemonLoadingCard } from "@/components/pokemon-loading-card"
 import { SidebarInset, SidebarTrigger } from "@/components/ui/sidebar"
 import { Suspense } from "react"
+import { PokemonSelector } from "@/components/pokemon-selector"
 
 // Create async components for each Pokemon
 async function LeftPokemonCard({ pokemon }: { pokemon: string }) {
   try {
     const data = await fetchPokemon(pokemon.toLowerCase())
     return (
-      <div className="h-[500px] sm:h-[600px] lg:h-[700px] overflow-y-auto">
+      <div className="h-[725px] overflow-y-auto">
         <PokemonCompareCard pokemon={data} side="left" />
       </div>
     )
   } catch (error) {
     return (
-      <div className="h-[500px] sm:h-[600px] lg:h-[700px] flex items-center justify-center bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl sm:rounded-2xl border-2 border-dashed border-blue-200">
+      <div className="h-[725px] flex items-center justify-center bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl sm:rounded-2xl border-2 border-dashed border-blue-200">
         <div className="text-center p-4 sm:p-6 lg:p-8">
           <div className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 mx-auto mb-3 sm:mb-4 bg-blue-200 rounded-full flex items-center justify-center">
             <span className="text-2xl sm:text-3xl lg:text-4xl">❌</span>
@@ -39,13 +39,13 @@ async function RightPokemonCard({ pokemon }: { pokemon: string }) {
   try {
     const data = await fetchPokemon(pokemon.toLowerCase())
     return (
-      <div className="h-[500px] sm:h-[600px] lg:h-[700px] overflow-y-auto">
+      <div className="h-[725px] overflow-y-auto">
         <PokemonCompareCard pokemon={data} side="right" />
       </div>
     )
   } catch (error) {
     return (
-      <div className="h-[500px] sm:h-[600px] lg:h-[700px] flex items-center justify-center bg-gradient-to-br from-red-50 to-red-100 rounded-xl sm:rounded-2xl border-2 border-dashed border-red-200">
+      <div className="h-[725px] flex items-center justify-center bg-gradient-to-br from-red-50 to-red-100 rounded-xl sm:rounded-2xl border-2 border-dashed border-red-200">
         <div className="text-center p-4 sm:p-6 lg:p-8">
           <div className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 mx-auto mb-3 sm:mb-4 bg-red-200 rounded-full flex items-center justify-center">
             <span className="text-2xl sm:text-3xl lg:text-4xl">❌</span>
@@ -168,7 +168,6 @@ export default async function ComparePokemonPage({
       </header>
       <div className="flex flex-1 flex-col gap-4 p-2 sm:p-4 lg:p-6">
         <div className="max-w-7xl mx-auto w-full">
-          {/* Pokemon Selectors */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-6 sm:mb-8">
             <PokemonSelector
               side="left"
@@ -182,16 +181,10 @@ export default async function ComparePokemonPage({
             />
           </div>
 
-          {/* VS Badge - Mobile Only */}
-          <div className="sm:hidden flex justify-center mb-4">
-            <div className="bg-gradient-to-r from-blue-500 to-red-500 text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg">
-              VS
-            </div>
-          </div>
+
 
           {/* Comparison Grid with Suspense */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 mb-8 relative">
-            {/* VS Badge - Desktop Only */}
             <div className="hidden sm:flex absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
               <div className="bg-gradient-to-r from-blue-500 to-red-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold shadow-lg border-4 border-white">
                 VS
@@ -212,7 +205,7 @@ export default async function ComparePokemonPage({
                   <LeftPokemonCard pokemon={leftPokemon} />
                 </Suspense>
               ) : (
-                <div className="h-[500px] sm:h-[600px] lg:h-[700px] flex items-center justify-center bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl sm:rounded-2xl border-2 border-dashed border-blue-200 transition-all duration-300 hover:border-blue-300 hover:shadow-md">
+                <div className="h-[725px] flex items-center justify-center bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl sm:rounded-2xl border-2 border-dashed border-blue-200 transition-all duration-300 hover:border-blue-300 hover:shadow-md">
                   <div className="text-center p-4 sm:p-6 lg:p-8">
                     <div className="w-12 h-12 sm:w-16 sm:h-16 lg:w-24 lg:h-24 mx-auto mb-3 sm:mb-4 bg-blue-200 rounded-full flex items-center justify-center animate-pulse">
                       <span className="text-lg sm:text-2xl lg:text-4xl">👈</span>
@@ -227,7 +220,12 @@ export default async function ComparePokemonPage({
                 </div>
               )}
             </div>
-
+            {/* VS Badge - Mobile Only */}
+            <div className="sm:hidden flex justify-center mb-4">
+              <div className="bg-gradient-to-r from-blue-500 to-red-500 text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg">
+                VS
+              </div>
+            </div>
             {/* Right Pokemon Slot */}
             <div className="space-y-3 sm:space-y-4">
               <div className="flex items-center justify-center gap-2">
@@ -242,7 +240,7 @@ export default async function ComparePokemonPage({
                   <RightPokemonCard pokemon={rightPokemon} />
                 </Suspense>
               ) : (
-                <div className="h-[500px] sm:h-[600px] lg:h-[700px] flex items-center justify-center bg-gradient-to-br from-red-50 to-red-100 rounded-xl sm:rounded-2xl border-2 border-dashed border-red-200 transition-all duration-300 hover:border-red-300 hover:shadow-md">
+                <div className="h-[725px] flex items-center justify-center bg-gradient-to-br from-red-50 to-red-100 rounded-xl sm:rounded-2xl border-2 border-dashed border-red-200 transition-all duration-300 hover:border-red-300 hover:shadow-md">
                   <div className="text-center p-4 sm:p-6 lg:p-8">
                     <div className="w-12 h-12 sm:w-16 sm:h-16 lg:w-24 lg:h-24 mx-auto mb-3 sm:mb-4 bg-red-200 rounded-full flex items-center justify-center animate-pulse">
                       <span className="text-lg sm:text-2xl lg:text-4xl">👉</span>
@@ -259,7 +257,6 @@ export default async function ComparePokemonPage({
             </div>
           </div>
 
-          {/* Quick Actions - Only show when both Pokemon are selected */}
           {leftPokemon && rightPokemon && (
             <div className="bg-white rounded-xl shadow-md border p-4 sm:p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4 text-center">Quick Actions</h3>

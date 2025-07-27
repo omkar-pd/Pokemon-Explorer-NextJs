@@ -1,48 +1,36 @@
 import { useState, useEffect } from 'react'
-import { getAllPokemon } from '@/lib/pokemon-utils'
 
 interface Pokemon {
   name: string
   url: string
 }
 
-let pokemonCache: Pokemon[] = []
-let isLoading = false
-let hasLoaded = false
-
 export function usePokemonList() {
-  const [pokemon, setPokemon] = useState<Pokemon[]>(pokemonCache)
-  const [loading, setLoading] = useState(isLoading && !hasLoaded)
+  const [pokemon, setPokemon] = useState<Pokemon[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    if (hasLoaded) {
-      setPokemon(pokemonCache)
-      return
-    }
-
-    if (isLoading) {
-      return
-    }
-
-    const fetchPokemon = async () => {
-      isLoading = true
-      setLoading(true)
-      
+    async function fetchPokemonList() {
       try {
-        const data = await getAllPokemon()
-        pokemonCache = data
-        hasLoaded = true
-        setPokemon(data)
-      } catch (error) {
-        console.error('Error fetching Pokemon:', error)
+        setLoading(true)
+        const response = await fetch('https://pokeapi.co/api/v2/pokemon?limit=1010')
+        if (!response.ok) {
+          throw new Error('Failed to fetch Pokemon list')
+        }
+        const data = await response.json()
+        setPokemon(data.results)
+        setError(null)
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'An error occurred')
+        setPokemon([])
       } finally {
-        isLoading = false
         setLoading(false)
       }
     }
 
-    fetchPokemon()
+    fetchPokemonList()
   }, [])
 
-  return { pokemon, loading }
+  return { pokemon, loading, error }
 }
