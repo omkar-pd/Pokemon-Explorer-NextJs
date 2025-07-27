@@ -3,7 +3,27 @@
 import Link from "next/link"
 import { useState, useEffect } from "react"
 import { Badge } from "@/components/ui/badge"
-import { Zap, Shield, Sword } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import {
+  Zap,
+  Shield,
+  Sword,
+  ArrowRight,
+  Flame,
+  Droplets,
+  Leaf,
+  Snowflake,
+  Skull,
+  Mountain,
+  Wind,
+  Brain,
+  Bug,
+  Gem,
+  Ghost,
+  Sparkles,
+  CircleDot,
+  Star
+} from "lucide-react"
 import { fetchPopularPokemon } from "@/lib/pokemon-utils"
 
 interface PokemonStat {
@@ -57,6 +77,28 @@ const typeColors: Record<string, string> = {
   dark: "bg-gray-800",
   steel: "bg-gray-500",
   fairy: "bg-pink-300",
+}
+
+// Type icon mapping
+const typeIcons: Record<string, any> = {
+  normal: CircleDot,
+  fire: Flame,
+  water: Droplets,
+  electric: Zap,
+  grass: Leaf,
+  ice: Snowflake,
+  fighting: Sword,
+  poison: Skull,
+  ground: Mountain,
+  flying: Wind,
+  psychic: Brain,
+  bug: Bug,
+  rock: Gem,
+  ghost: Ghost,
+  dragon: Sparkles,
+  dark: CircleDot,
+  steel: Shield,
+  fairy: Star,
 }
 
 export function PopularPokemon() {
@@ -113,98 +155,104 @@ export function PopularPokemon() {
             Discover some of the most beloved Pokémon from across all generations
           </p>
         </div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {popularPokemon.map((pokemon) => {
             const attackStat = pokemon.stats.find(stat => stat.stat.name === 'attack')?.base_stat || 0;
             const defenseStat = pokemon.stats.find(stat => stat.stat.name === 'defense')?.base_stat || 0;
             const speedStat = pokemon.stats.find(stat => stat.stat.name === 'speed')?.base_stat || 0;
+            const primaryType = pokemon.types[0]?.type?.name || 'normal'
+            const TypeIcon = typeIcons[primaryType] || CircleDot
 
             return (
-              <Link
+              <div
                 key={pokemon.id}
-                href={`/pokemon/${pokemon.name.toLowerCase()}`}
-                className="group"
+                className="group bg-white rounded-2xl shadow-lg border hover:shadow-2xl transition-all duration-300 hover:scale-105 p-6 overflow-hidden relative"
               >
-                <div className="bg-white rounded-2xl shadow-lg border hover:shadow-2xl transition-all duration-300 hover:scale-105 p-6 overflow-hidden">
-                  {/* Pokemon Image */}
-                  <div className="relative mb-4">
-                    <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-primary/5 rounded-full blur-xl scale-110"></div>
-                    <img
-                      src={
-                        pokemon.sprites.other["official-artwork"]?.front_default ||
-                        pokemon.sprites.other.dream_world?.front_default ||
-                        "/placeholder.svg?height=150&width=150"
-                      }
-                      alt={pokemon.name}
-                      className="relative w-32 h-32 mx-auto object-contain drop-shadow-lg group-hover:scale-110 transition-transform duration-300"
-                    />
-                  </div>
-
-                  {/* Pokemon Info */}
-                  <div className="text-center mb-4">
-                    <div className="flex items-center justify-center gap-2 mb-2">
-                      <h3 className="text-xl font-bold text-gray-900 capitalize">
-                        {pokemon.name}
-                      </h3>
-                      <Badge className="bg-primary text-white">
-                        #{pokemon.id.toString().padStart(3, "0")}
-                      </Badge>
-                    </div>
-                    
-                    {/* Types */}
-                    <div className="flex justify-center gap-2 mb-4">
-                      {pokemon.types.map((type, index) => (
-                        <Badge
-                          key={index}
-                          className={`text-white font-medium text-xs ${
-                            typeColors[type.type.name] || "bg-gray-400"
-                          }`}
-                        >
-                          {type.type.name}
-                        </Badge>
-                      ))}
-                    </div>
-
-                    {/* Quick Stats */}
-                    <div className="grid grid-cols-3 gap-2 text-center">
-                      <div className="bg-red-50 rounded-lg p-2 border border-red-100">
-                        <div className="flex items-center justify-center gap-1 mb-1">
-                          <Sword className="w-3 h-3 text-red-500" />
-                        </div>
-                        <p className="text-sm font-bold text-red-600">{attackStat}</p>
-                        <p className="text-xs text-red-500">ATK</p>
-                      </div>
-                      <div className="bg-blue-50 rounded-lg p-2 border border-blue-100">
-                        <div className="flex items-center justify-center gap-1 mb-1">
-                          <Shield className="w-3 h-3 text-blue-500" />
-                        </div>
-                        <p className="text-sm font-bold text-blue-600">{defenseStat}</p>
-                        <p className="text-xs text-blue-500">DEF</p>
-                      </div>
-                      <div className="bg-yellow-50 rounded-lg p-2 border border-yellow-100">
-                        <div className="flex items-center justify-center gap-1 mb-1">
-                          <Zap className="w-3 h-3 text-yellow-500" />
-                        </div>
-                        <p className="text-sm font-bold text-yellow-600">{speedStat}</p>
-                        <p className="text-xs text-yellow-500">SPD</p>
-                      </div>
-                    </div>
-
-                    {/* Physical Stats */}
-                    <div className="grid grid-cols-2 gap-2 mt-3 text-xs text-gray-600">
-                      <div className="bg-gray-50 rounded-lg p-2">
-                        <p className="font-medium">{pokemon.height / 10}m</p>
-                        <p>Height</p>
-                      </div>
-                      <div className="bg-gray-50 rounded-lg p-2">
-                        <p className="font-medium">{pokemon.weight / 10}kg</p>
-                        <p>Weight</p>
-                      </div>
-                    </div>
+                <div className="absolute top-4 right-4 z-10">
+                  <div className={`${typeColors[primaryType]} rounded-lg p-2 shadow-lg`}>
+                    <TypeIcon className="w-5 h-5 text-white" />
                   </div>
                 </div>
-              </Link>
+
+                <div className="relative mb-6 pt-2">
+                  <div className="w-32 h-32 mx-auto bg-gradient-to-br from-gray-50 to-gray-100 rounded-full flex items-center justify-center overflow-hidden shadow-inner">
+                    <img
+                      src={pokemon.sprites.other['official-artwork']?.front_default || pokemon.sprites.front_default}
+                      alt={pokemon.name}
+                      className="w-28 h-28 object-contain group-hover:scale-110 transition-transform duration-300"
+                    />
+                  </div>
+                </div>
+
+                <div className="text-center space-y-4">
+                  <h3 className="text-2xl font-bold text-gray-900 capitalize group-hover:text-primary transition-colors">
+                    {pokemon.name}
+                  </h3>
+
+                  <div className="flex justify-center gap-2">
+                    {pokemon.types.map((type) => (
+                      <Badge
+                        key={type.type.name}
+                        className={`${typeColors[type.type.name]} text-white font-medium px-3 py-1 text-sm capitalize`}
+                      >
+                        {type.type.name}
+                      </Badge>
+                    ))}
+                  </div>
+
+                  <div className="grid grid-cols-3 gap-4 mt-6">
+                    <div className="text-center">
+                      <div className="flex items-center justify-center mb-2">
+                        <Sword className="w-5 h-5 text-red-500" />
+                      </div>
+                      <div className="text-2xl font-bold text-gray-900">{attackStat}</div>
+                      <div className="text-sm text-gray-600">Attack</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="flex items-center justify-center mb-2">
+                        <Shield className="w-5 h-5 text-blue-500" />
+                      </div>
+                      <div className="text-2xl font-bold text-gray-900">{defenseStat}</div>
+                      <div className="text-sm text-gray-600">Defense</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="flex items-center justify-center mb-2">
+                        <Zap className="w-5 h-5 text-yellow-500" />
+                      </div>
+                      <div className="text-2xl font-bold text-gray-900">{speedStat}</div>
+                      <div className="text-sm text-gray-600">Speed</div>
+                    </div>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex flex-col gap-2 mt-6">
+                    <Link
+                      href={`/pokemon/${pokemon.name.toLowerCase()}`}
+                      className="w-full"
+                    >
+                      <Button
+                        variant="outline"
+                        className="w-full group-hover:border-primary group-hover:text-primary transition-colors"
+                      >
+                        View Details
+                        <ArrowRight className="w-4 h-4 ml-2" />
+                      </Button>
+                    </Link>
+                    <Link
+                      href={`/compare/${pokemon.name.toLowerCase()}`}
+                      className="w-full"
+                    >
+                      <Button
+                        className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white border-0"
+                      >
+                        <Zap className="w-4 h-4 mr-2" />
+                        Compare
+                      </Button>
+                    </Link>
+                  </div>
+                </div>
+              </div>
             )
           })}
         </div>

@@ -10,34 +10,32 @@ import {
   SidebarRail,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
-import { Search, Loader2, Zap } from "lucide-react"
+import {
+  Search,
+  Loader2,
+  Zap,
+  Flame,
+  Droplets,
+  Leaf,
+  Snowflake,
+  Sword,
+  Skull,
+  Mountain,
+  Wind,
+  Brain,
+  Bug,
+  Gem,
+  Ghost,
+  Sparkles,
+  Shield,
+  CircleDot,
+  Star
+} from "lucide-react"
 import Link from "next/link"
 import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
 import InfiniteScroll from "react-infinite-scroll-component"
 import { useState, useEffect } from "react"
 import { usePokemonList } from "@/hooks/use-pokemon-list"
-
-const typeColors: Record<string, string> = {
-  normal: "bg-gray-400",
-  fire: "bg-red-500",
-  water: "bg-blue-500",
-  electric: "bg-yellow-400",
-  grass: "bg-green-500",
-  ice: "bg-blue-200",
-  fighting: "bg-red-700",
-  poison: "bg-purple-500",
-  ground: "bg-yellow-600",
-  flying: "bg-indigo-400",
-  psychic: "bg-pink-500",
-  bug: "bg-green-400",
-  rock: "bg-yellow-800",
-  ghost: "bg-purple-700",
-  dragon: "bg-indigo-700",
-  dark: "bg-gray-800",
-  steel: "bg-gray-500",
-  fairy: "bg-pink-300",
-}
 
 export function PokemonSidebar() {
   const [searchQuery, setSearchQuery] = useState("")
@@ -108,8 +106,7 @@ export function PokemonSidebar() {
           </div>
           <SidebarTrigger className="text-white hover:bg-white/20 md:hidden flex-shrink-0" />
         </div>
-        
-        {/* Search Input - Responsive */}
+
         <div className="relative mt-2 md:mt-3">
           <Search className="absolute left-2 md:left-3 top-1/2 transform -translate-y-1/2 h-3 w-3 md:h-4 md:w-4 text-white/70" />
           <Input
@@ -119,8 +116,7 @@ export function PokemonSidebar() {
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
-        
-        {/* Results Counter - Responsive */}
+
         {pokemonList.length > 0 && (
           <div className="text-[10px] md:text-xs text-white/80 mt-1 md:mt-2">
             {searchQuery
@@ -155,59 +151,43 @@ export function PokemonSidebar() {
           }
         >
           <SidebarMenu className="p-1 md:p-2 space-y-0.5 md:space-y-1">
-            {pokemonList.map((pokemon, index) => (
-              <SidebarMenuItem key={pokemon.name}>
-                <SidebarMenuButton className="group hover:bg-white hover:shadow-md transition-all duration-200 rounded-md md:rounded-lg p-2 md:p-3 h-auto">
-                  <Link href={`/pokemon/${pokemon.name.toLowerCase()}`} className="w-full">
-                    <div className="flex items-center gap-2 md:gap-3 w-full">
-                      {/* Pokemon ID Badge - Responsive */}
-                      <div className="flex-shrink-0">
-                        <div className="w-6 h-6 md:w-8 md:h-8 bg-gradient-to-br from-primary/20 to-primary/10 rounded-full flex items-center justify-center border border-primary/20 md:border-2 group-hover:border-primary/40 transition-colors">
-                          <span className="text-[9px] md:text-xs font-bold text-primary">
-                            #{pokemon.id?.toString().padStart(3, "0") || (index + 1).toString().padStart(3, "0")}
-                          </span>
-                        </div>
-                      </div>
+            {pokemonList.map((pokemon, index) => {
+              const firstLetter = pokemon.name.charAt(0).toUpperCase();
 
-                      {/* Pokemon Info - Responsive */}
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between">
-                          <span className="font-medium text-xs md:text-sm capitalize truncate group-hover:text-primary transition-colors">
-                            {pokemon.name}
-                          </span>
-                        </div>
+              const letterColors = [
+                'bg-red-500', 'bg-blue-500', 'bg-green-500', 'bg-yellow-500',
+                'bg-purple-500', 'bg-pink-500', 'bg-indigo-500', 'bg-cyan-500',
+                'bg-orange-500', 'bg-teal-500', 'bg-lime-500', 'bg-rose-500'
+              ];
+              const colorIndex = firstLetter.charCodeAt(0) % letterColors.length;
+              const letterColor = letterColors[colorIndex];
 
-                        {/* Pokemon Types - Responsive */}
-                        {pokemon.types && (
-                          <div className="flex gap-0.5 md:gap-1 mt-0.5 md:mt-1">
-                            {pokemon.types.slice(0, 2).map((type, typeIndex) => (
-                              <Badge
-                                key={typeIndex}
-                                className={`text-[8px] md:text-[10px] px-1 md:px-1.5 py-0.5 text-white font-medium ${typeColors[type.type?.name || type] || "bg-gray-400"
-                                  }`}
-                              >
-                                {/* Show full type name on desktop, first letter on mobile */}
-                                <span className="hidden md:inline">
-                                  {(type.type?.name || type)}
-                                </span>
-                                <span className="md:hidden">
-                                  {(type.type?.name || type).charAt(0).toUpperCase()}
-                                </span>
-                              </Badge>
-                            ))}
+              return (
+                <SidebarMenuItem key={pokemon.name}>
+                  <SidebarMenuButton className="group hover:bg-white hover:shadow-md transition-all duration-200 rounded-md md:rounded-lg p-2 md:p-3 h-auto">
+                    <Link href={`/pokemon/${pokemon.name.toLowerCase()}`} className="w-full">
+                      <div className="flex items-center gap-2 md:gap-3 w-full">
+                        <div className="flex-shrink-0">
+                          <div className={`w-6 h-6 md:w-7 md:h-7 ${letterColor} rounded-lg flex items-center justify-center shadow-sm group-hover:shadow-md transition-all duration-200`}>
+                            <span className="text-white font-bold text-xs md:text-sm">
+                              {firstLetter}
+                            </span>
                           </div>
-                        )}
-                      </div>
+                        </div>
 
-                      {/* Hover Arrow - Hidden on mobile for space */}
-                      <div className="hidden md:block opacity-0 group-hover:opacity-100 transition-opacity">
-                        <div className="w-2 h-2 border-r-2 border-b-2 border-primary/60 rotate-[-45deg]"></div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between">
+                            <span className="font-medium text-xs md:text-sm capitalize truncate group-hover:text-primary transition-colors">
+                              {pokemon.name}
+                            </span>
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            ))}
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              )
+            })}
           </SidebarMenu>
         </InfiniteScroll>
       </SidebarContent>
